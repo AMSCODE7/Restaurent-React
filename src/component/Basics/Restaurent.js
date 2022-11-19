@@ -1,26 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "./index.css";
+import Menu from '../MenuApi';
+import MenuCard from './MenuCard';
+import Navbar from './Navbar';
+
+const uniqueList = [
+  ...new Set(
+    Menu.map((curElem) => {
+      return curElem.category
+    })
+  ),
+  "All",
+];
 
 const Restaurent = () => {
+  const [menuData, setMenuData] = useState(Menu);
+  const [menuList, setMenuList] = useState(uniqueList);
+
+  const filterItem = (category) => {
+
+    if (category === "All") {
+      setMenuData(Menu);
+      return;
+    }
+
+    const updatedList = Menu.filter((curElem) => {
+      return curElem.category === category;
+    });
+    setMenuData(updatedList);
+  };
+
   return (
     <>
-    <div className='card-container'>
-        <div className='card'>
-            <div className='card-body'>
-                <span className='card-number card-circle subtle'>1</span>
-                <span className='card-author subtle'>Breakfast</span>
-                <h2 className='card-title'>Maggi</h2>
-                <span className='card-description subtle'>
-                When the heart craves all sorts 
-                of creamy delicacies from around the world, fixing up our Maggi 
-                with an Italian twist should be your go-to solution. Make sure 
-                there's enough cheese to justify this experiment.
-                </span>
-                <div className='card-read'>Read</div>
-            </div>
-            <img src="https://geekrobocook.com/wp-content/uploads/2021/03/46_Mexican-Maggi.jpg" />
-        </div>
-    </div>
+      <Navbar filterItem={filterItem} menuList={menuList} />
+      <MenuCard menuData={menuData} />
     </>
   )
 }
